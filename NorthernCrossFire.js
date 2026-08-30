@@ -69,47 +69,121 @@ function component(width, height, imageSrc, x, y, type) {
 let player;
 let enemies = [];
 let health = 100;
+let keys = {};
+let isGameOver = false;
+let deathMessage = null;
 
 function startGame() {
     player = new component(80, 80, "WebsiteIcon.png", 300, 200, "image");
 
-    // Create enemies
     for (let i = 0; i < 5; i++) {
         enemies.push(new component(40, 40, "favicon.png", Math.random() * 600, Math.random() * 400, "enemy"));
     }
 
     myGameArea.start();
+    createDeathMessage();
+}
+
+function createDeathMessage() {
+    deathMessage = document.createElement("div");
+    deathMessage.id = "game-over";
+    deathMessage.className = "hidden";
+    deathMessage.innerHTML = `
+        <div class="message-card">
+            <h3>Game Over</h3>
+            <p>You were caught in the fire.</p>
+        </div>
+    `;
+    deathMessage.addEventListener("click", function() {
+        deathMessage.classList.add("hidden");
+    });
+    document.body.appendChild(deathMessage);
+}
+
+function triggerDeath() {
+    if (isGameOver) {
+        return;
+    }
+
+    isGameOver = true;
+    player.speed = 0;
+    player.moveAngle = 0;
+    deathMessage.classList.remove("hidden");
 }
 
 // -------------------------
 // KEYBOARD CONTROLS
 // -------------------------
 document.addEventListener("keydown", function(e) {
-    if (e.key === "ArrowUp")    { player.speed = 2; }
-    if (e.key === "ArrowDown")  { player.speed = -2; }
-    if (e.key === "ArrowLeft")  { player.moveAngle = -3; }
-    if (e.key === "ArrowRight") { player.moveAngle = 3; }
+    const key = e.key.toLowerCase();
+    if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(key)) {
+        e.preventDefault();
+    }
+
+    if (isGameOver) {
+        return;
+    }
+
+    keys[key] = true;
 });
 
 document.addEventListener("keyup", function(e) {
-    player.speed = 20;
-    player.moveAngle = 0;
+    const key = e.key.toLowerCase();
+    keys[key] = false;
 });
+
+function handlePlayerMovement() {
+    if (isGameOver) {
+        return;
+    }
+
+    let dx = 0;
+    let dy = 0;
+
+    if (keys.w || keys.arrowup) {
+        dy -= 1;
+    }
+    if (keys.s || keys.arrowdown) {
+        dy += 1;
+    }
+    if (keys.a || keys.arrowleft) {
+        dx -= 1;
+    }
+    if (keys.d || keys.arrowright) {
+        dx += 1;
+    }
+
+    if (dx !== 0 || dy !== 0) {
+        const distance = Math.hypot(dx, dy) || 1;
+        const moveSpeed = 2.5;
+        const moveX = (dx / distance) * moveSpeed;
+        const moveY = (dy / distance) * moveSpeed;
+
+        player.x += moveX;
+        player.y += moveY;
+        player.angle = Math.atan2(moveY, moveX);
+    }
+
+    player.x = Math.max(player.width / 2, Math.min(myGameArea.canvas.width - player.width / 2, player.x));
+    player.y = Math.max(player.height / 2, Math.min(myGameArea.canvas.height - player.height / 2, player.y));
+}
 
 // -------------------------
 // HEALTH BAR
 // -------------------------
 function drawHealthBar() {
     const ctx = myGameArea.context;
+    const barWidth = 200;
+    const healthWidth = barWidth * (health / 100);
 
-    ctx.fillStyle = "red";
-    ctx.fillRect(20, 20, 200, 20);
+    ctx.fillStyle = "#3b0d0d";
+    ctx.fillRect(20, 20, barWidth, 20);
 
-    ctx.fillStyle = "lime";
-    ctx.fillRect(20, 20, 1000 * (health / 1000), 20);
+    ctx.fillStyle = "#5ae65a";
+    ctx.fillRect(20, 20, healthWidth, 20);
 
-    ctx.strokeStyle = "white";
-    ctx.strokeRect(20, 20, 200, 20);
+    ctx.strokeStyle = "#f5f5f5";
+    ctx.strokeRect(20, 20, barWidth, 20);
 }
 
 // -------------------------
@@ -118,29 +192,32 @@ function drawHealthBar() {
 function updateGameArea() {
     myGameArea.clear();
 
-    player.newPos();
-    player.update();
+    if (!isGameOver) {
+        handlePlayerMovement();
+        player.update();
 
-    enemies.forEach(enemy => {
-        // Move enemies toward player
-        let dx = player.x - enemy.x;
-        let dy = player.y - enemy.y;
-        let angle = Math.atan2(dy, dx);
-
-        enemy.x += Math.cos(angle) * 1.2;
-        enemy.y += Math.sin(angle) * 1.2;
-
-        enemy.update();
-
-        // Collision detection
-        if (player.crashWith(enemy)) {
-            health -= 1;
-            if (health <= 0) {
-                alert("Game Over");
-                document.location.reload();
+        enemies.forEach(enemy => {
+            if (isGameOver) {
+                return;
             }
-        }
-    });
+
+            let dx = player.x - enemy.x;
+            let dy = player.y - enemy.y;
+            let angle = Math.atan2(dy, dx);
+
+            enemy.x += Math.cos(angle) * 1.2;
+            enemy.y += Math.sin(angle) * 1.2;
+
+            enemy.update();
+
+            if (player.crashWith(enemy)) {
+                health -= 1;
+                if (health <= 0) {
+                    triggerDeath();
+                }
+            }
+        });
+    }
 
     drawHealthBar();
 }
