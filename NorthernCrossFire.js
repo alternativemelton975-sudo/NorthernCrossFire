@@ -1,7 +1,4 @@
 
-// -------------------------
-// GAME AREA
-// -------------------------
 let myGameArea = {
     canvas: document.createElement("canvas"),
     start: function() {
@@ -15,10 +12,6 @@ let myGameArea = {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 };
-
-// -------------------------
-// COMPONENT (PLAYER + ENEMIES)
-// -------------------------
 function component(width, height, imageSrc, x, y, type) {
     this.type = type;
     this.width = width;
@@ -63,9 +56,6 @@ function component(width, height, imageSrc, x, y, type) {
     };
 }
 
-// -------------------------
-// PLAYER + ENEMIES
-// -------------------------
 let player;
 let enemies = [];
 let health = 100;
@@ -111,9 +101,6 @@ function triggerDeath() {
     deathMessage.classList.remove("hidden");
 }
 
-// -------------------------
-// KEYBOARD CONTROLS
-// -------------------------
 document.addEventListener("keydown", function(e) {
     const key = e.key.toLowerCase();
     if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(key)) {
@@ -168,9 +155,6 @@ function handlePlayerMovement() {
     player.y = Math.max(player.height / 2, Math.min(myGameArea.canvas.height - player.height / 2, player.y));
 }
 
-// -------------------------
-// HEALTH BAR
-// -------------------------
 function drawHealthBar() {
     const ctx = myGameArea.context;
     const barWidth = 200;
@@ -186,9 +170,6 @@ function drawHealthBar() {
     ctx.strokeRect(20, 20, barWidth, 20);
 }
 
-// -------------------------
-// GAME LOOP
-// -------------------------
 function updateGameArea() {
     myGameArea.clear();
 
