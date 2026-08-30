@@ -202,3 +202,9 @@ function updateGameArea() {
 
     drawHealthBar();
 }
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startGame);
+} else {
+    startGame();
+}
