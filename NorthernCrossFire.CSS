@@ -1,0 +1,138 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 30px 20px 60px;
+  background-color: pink;
+  color: #690a0a;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+p {
+  color: #690a0a;
+  text-align: center;
+  background-color: pink;
+  margin: 10px auto;
+  width: min(90vw, 300px);
+}
+
+h1,
+h2,
+h3 {
+  text-align: center;
+  margin: 20px auto;
+  width: min(1200px, 90vw);
+}
+
+h1 {
+  color: blanchedalmond;
+  background-color: brown;
+  border-radius: 25px;
+  padding: 20px;
+  min-height: 80px;
+}
+
+h2 {
+  color: brown;
+  background-color: blanchedalmond;
+  border-radius: 25px;
+  padding: 20px;
+}
+
+h3 {
+  color: #690a0a;
+}
+
+a {
+  display: inline-block;
+  margin: 10px auto;
+  text-align: center;
+  color: brown;
+  background-color: blanchedalmond;
+  text-decoration: none;
+  border-radius: 10px;
+  padding: 18px 22px;
+  width: min(90vw, 420px);
+  transition: all 0.2s ease-in-out;
+}
+
+a:link,
+a:visited {
+  color: brown;
+  background-color: blanchedalmond;
+}
+
+a:hover {
+  color: blanchedalmond;
+  background-color: brown;
+}
+
+a:active {
+  color: brown;
+  background-color: blanchedalmond;
+}
+
+#Travel {
+  text-align: center;
+  width: 150px;
+  height: 150px;
+  position: relative;
+  background-image: url(WarDog.png);
+}
+
+#WarDog {
+  text-align: center;
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  background: pink;
+}
+
+div {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: min(90vw, 1200px);
+  min-height: 600px;
+  border: 20px solid pink;
+  margin: 0 auto;
+}
+
+img {
+  display: block;
+  margin: 20px auto;
+  max-width: 100%;
+  height: auto;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+  border: 1px solid pink;
+  background-color: pink;
+  max-width: 100%;
+}
+
+article,
+footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+center {
+  width: 100%;
+}
